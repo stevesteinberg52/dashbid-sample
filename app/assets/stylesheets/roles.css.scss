@@ -1,0 +1,95 @@
+label.check-all, label.ability {
+  margin: .3em;
+  cursor: pointer;
+}
+
+label.ability {
+  em {
+    font-weight: normal;
+    font-size: .8em;
+  }
+}
+
+#owner-disclaimer {
+  margin: 5em 2em;
+  font-size: 1em;
+}
+
+#roles-list, #abilities-list {
+  h1 {
+    margin: .5em 0;
+    float: left;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  h3 {
+    margin: 0 0 1em;
+  }
+
+  .sub-actions {
+    clear: both;
+    margin: 0 0 .5em;
+
+    a.edit-item, a.delete-item {
+      font-size: .8em;
+    }
+  }
+
+  form.edit-role {
+    clear: both;
+    margin: 2em 0;
+  }
+
+  .sub-header {
+    overflow: auto;
+    margin: 0 0 1em;
+    border-bottom: 1px dotted #ccc;
+  }
+
+  #abilities-filter {
+    float: right;
+    width: 20em;
+    margin: 1em;
+  }
+
+  .abilities {
+    -webkit-column-count: 3;
+    -moz-column-count: 3;
+    column-count: 3;
+    clear: both;
+  }
+
+  .ability {
+    margin: 0 0 2em;
+
+    .ability-metadata {
+      color: #666;
+      clear: both;
+
+      p {
+        margin: 0;
+      }
+
+      code {
+        color: #666;
+        background-color: #F3F3F3;
+      }
+    }
+  }
+}
+
+/* Better layout for roles field in admin/users#edit */
+table {
+  td.roles-columns {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+
+    .checkbox:first-child {
+      margin-top: 0;
+    }
+  }
+}
