@@ -1,0 +1,20 @@
+CREATE ALGORITHM=UNDEFINED DEFINER=`admin`@`%`
+SQL SECURITY DEFINER
+VIEW `vw_margin_data_and_configs` AS
+select `vw_margins_by_day_by_customer_by_placement`.`date_est` AS `date_est`,
+`vw_margins_by_day_by_customer_by_placement`.`customer_id` AS `customer_id`,
+`vw_margins_by_day_by_customer_by_placement`.`account_contact_id` AS `account_contact_id`,
+`vw_margins_by_day_by_customer_by_placement`.`account_contact_name` AS `account_contact_name`,
+`vw_margins_by_day_by_customer_by_placement`.`placement_id` AS `placement_id`,
+`vw_margins_by_day_by_customer_by_placement`.`network_revenue` AS `network_revenue`,
+`vw_margins_by_day_by_customer_by_placement`.`customer_payout` AS `customer_payout`,
+`vw_margins_by_day_by_customer_by_placement`.`network_impressions` AS `network_impressions`,
+`vw_margins_by_day_by_customer_by_placement`.`sx_network_impressions` AS `sx_network_impressions`,
+`vw_margins_by_day_by_customer_by_placement`.`acs` AS `acs`,
+`vw_margins_by_day_by_customer_by_placement`.`sx_acs` AS `sx_acs`,
+`vw_configs_by_day_by_customer_by_placement`.`configs` AS `configs`
+from (`vw_margins_by_day_by_customer_by_placement`
+join `vw_configs_by_day_by_customer_by_placement`
+on(((`vw_margins_by_day_by_customer_by_placement`.`date_est` = `vw_configs_by_day_by_customer_by_placement`.`dd`)
+and (`vw_margins_by_day_by_customer_by_placement`.`customer_id` = `vw_configs_by_day_by_customer_by_placement`.`customer_id`)
+and (`vw_margins_by_day_by_customer_by_placement`.`placement_id` = `vw_configs_by_day_by_customer_by_placement`.`placement_id`))))

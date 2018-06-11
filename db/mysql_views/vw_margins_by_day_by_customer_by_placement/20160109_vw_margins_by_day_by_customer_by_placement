@@ -1,0 +1,19 @@
+CREATE ALGORITHM=UNDEFINED DEFINER=`admin`@`%`
+SQL SECURITY DEFINER
+VIEW `vw_margins_by_day_by_customer_by_placement` AS
+select `dbamapp`.`margin_by_dates`.`date_est` AS `date_est`,
+`dbamapp`.`margin_by_dates`.`customer_id` AS `customer_id`,
+`dbamapp`.`margin_by_dates`.`customer_name` AS `customer_name`,
+`dbamapp`.`margin_by_dates`.`account_contact_id` AS `account_contact_id`,
+`dbamapp`.`margin_by_dates`.`account_contact_name` AS `account_contact_name`,
+`dbamapp`.`margin_by_dates`.`placement_id` AS `placement_id`,
+`dbamapp`.`margin_by_dates`.`placement_is_mobile` AS `placement_is_mobile`,
+sum(`dbamapp`.`margin_by_dates`.`revenue_in_m2`) AS `network_revenue`,
+sum(`dbamapp`.`margin_by_dates`.`pay_out_m2`) AS `customer_payout`,
+sum(`dbamapp`.`margin_by_dates`.`network_impressions_m2`) AS `network_impressions`,
+sum(if((`dbamapp`.`margin_by_dates`.`network_id` = 10),`dbamapp`.`margin_by_dates`.`network_impressions_m2`,0)) AS `sx_network_impressions`,
+sum(`dbamapp`.`margin_by_dates`.`acs`) AS `acs`,
+sum(if((`dbamapp`.`margin_by_dates`.`network_id` = 10),`dbamapp`.`margin_by_dates`.`acs`,0)) AS `sx_acs`
+from `margin_by_dates`
+where (`dbamapp`.`margin_by_dates`.`date_est` >= '2015-01-01')
+group by `dbamapp`.`margin_by_dates`.`date_est`,`dbamapp`.`margin_by_dates`.`customer_id`,`dbamapp`.`margin_by_dates`.`placement_id`
