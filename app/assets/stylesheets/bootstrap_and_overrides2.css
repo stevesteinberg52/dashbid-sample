@@ -1,0 +1,158 @@
+h1, h2, h3, h4, td.h1, td.h2, td.h3, td.h4 {
+  margin: 2px 0 3px 0;
+  padding: 0;
+  font-size: 22px;
+  display: block;
+  font-weight: bold;
+}
+h1, td.h1 {
+  padding: 3px 0;
+}
+h2, td.h2 {
+  font-size: 18px;
+}
+h3, td.h3 {
+  font-size: 14px;
+}
+h4, td.h4 {
+  font-size: 12px;
+}
+h5, td.h5 {
+  font-size: 10px;
+}
+
+/* used for page headings to vertically align h1 and buttons */
+.h1-table {
+  margin: 5px 0 3px 0;
+  padding: 0;
+  width: auto;
+}
+.h1-table tr {
+  vertical-align: middle;
+}
+.h1-table th {
+  font-size: 22px;
+  font-weight: 500;
+  text-align: left;
+  background-color: #fff;
+  color: #333;
+  padding: 0 15px 0 0;
+}
+
+input {
+  border: 1px solid #bbb;
+  font-size: 14px;
+}
+
+select {
+  border: 1px solid #bbb;
+}
+
+/* ransack classes */
+a.sort_link {
+  font-weight: bold;
+  /*color: #06f;*/
+  color: #369;
+  text-decoration: underline;
+}
+
+ul.no-bullets {
+  list-style-type: none;
+  list-style-image: none;
+  list-style-position: outside;
+}
+
+div.field {
+  margin: 3px 0 2px;
+}
+
+ol.numbered-list  li  {
+  list-style: decimal none inside ;
+}
+
+ol.menu-items-list  li  {
+  list-style: decimal inside ;
+  font-size: medium;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.smaller {
+  font-size: smaller;
+}
+
+.italic, .italics {
+  font-style: italic;
+}
+
+.ad_source_select {
+    width: 100px;
+}
+
+.customer_select, .tz_select {
+  width: 325px;
+}
+
+.list_assignment_group_select {
+    width: 500px;
+}
+
+.network_select {
+  width: 325px;
+}
+
+.placement_select {
+  width: 500px;
+}
+
+.rows_select {
+    width: 60px;
+}
+
+.user_select {
+  width: 250px;
+}
+
+.invert {-webkit-filter: invert(100%);}
+
+.admin-nav-label {
+  display: inline;
+  padding: .2em .6em .3em;
+  font-size: 75%;
+  /*font-weight: 700;*/
+  font-weight: normal;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25em;
+  background-color: #bbb;
+  margin:0;
+}
+
+/* date range picker */
+.input-group, .form-control {
+  float: none;
+}
+
+.input-group-addon, .form-control {
+  padding: 1px 6px;
+}
+
+/* tabs */
+div.well {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+
+/* customer navigation */
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  color: #4d4d4d  ;
+  background-color: #cfcfcf;
+}

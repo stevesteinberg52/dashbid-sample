@@ -1,0 +1,41 @@
+<h1>
+  Margin Report
+  <% case @report_by %>
+  <% when 'customer' %>
+    by Customer
+  <% when 'network' %>
+    by Network
+  <% when 'placement' %>
+    by Placement
+  <% when 'ad_source' %>
+    by Ad Source
+  <% when 'date' %>
+    by Date
+  <% end %>
+  <span style="font-weight: normal; font-size: 12px; padding-left: 15px; font-style: italic;">
+      Last Updated: <%= @run_at.strftime('%Y-%m-%d %H:%M') if @run_at %>
+  </span>
+</h1>
+
+<% if params[:group_id].present? %>
+  <div class="bold italic">
+    WARNING: Placements can belong to more than one placement group. Use report totals with caution.
+  </div>
+<% end %>
+
+<div class="panel panel-default">
+  <div class="table-container">
+    <table class="organizer" style="border: none;">
+      <tr valign="top">
+        <td style="padding:0 1px;border-right:1px solid grey;">
+          <%= render 'filter_form' %>
+        </td>
+        <td width="100%" style="background-color:white; padding:0 1px;">
+          <% if @report_by %>
+            <%= render :partial => 'data_table' %>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

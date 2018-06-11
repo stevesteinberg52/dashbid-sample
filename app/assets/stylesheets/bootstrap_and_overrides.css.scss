@@ -1,0 +1,284 @@
+h1 small, .h1 small,
+h2 small, .h2 small,
+h3 small, .h3 small,
+h1 .small, .h1 .small,
+h2 .small, .h2 .small,
+h3 .small, .h3 .small {
+  font-size: 85%;
+}
+
+h1.main-header {
+  font-size: 2em;
+}
+
+#error_list.list-group .list-group-item{
+  display: block;
+  padding: 10px 15px;
+}
+
+.tab-content {
+  border: 1px solid #ddd;
+  border-top: 0;
+  border-left: 0;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+a.navbar-brand {
+  padding: 0 15px;
+  line-height: 65px;
+  height: auto;
+}
+
+a.navbar-brand, a.navbar-brand:visited, a.navbar-brand:link, a.navbar-brand:hover {
+  color:#0088CC !important;
+}
+a.navbar-brand:hover{
+  background-color: #eee !important;
+}
+
+div.navbar {
+  margin-bottom: 0;
+}
+
+div.container {
+  margin: 0;
+  padding: 0 15px;
+  width: auto;
+
+  .jumbotron {
+    padding-right: 30px;
+    padding-left: 30px;
+  }
+}
+
+div.container.flash_container {
+  margin-top: 10px;
+}
+
+.panel-body {
+  padding: 0;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.container::before {
+  padding: 0;
+  margin: 0;
+}
+
+a:link, a:visited {
+    color: #2e6ab1;
+    text-decoration: none;
+}
+a:hover, a:active {
+    color: #2e6ab1;
+    text-decoration: underline;
+}
+
+th a:link, th a:visited {
+    color: #0053CF;
+    text-decoration: none;
+}
+th a:hover, th a:active {
+    color: #0042A6;
+    text-decoration: underline;
+}
+
+
+.btn-primary {
+    /*background-color: #093;*/
+}
+.btn-sm {
+    font-size: 14px;
+    padding: 2px 5px;
+}
+a.btn {
+    color: #fff;
+    margin: 1px 1px 1px 0;
+}
+a.btn-default {
+    color: #333;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.word-wrap {
+    word-wrap: break-word;
+}
+
+span.moveup {
+    top: -1px;
+    position: relative;
+}
+
+.pagination:after {
+    content: "";
+    margin: 0;
+    padding: 0;
+}
+
+.form {
+  padding: 0;
+  margin: 0;
+}
+
+hr {
+    border: 1px solid #ccc;
+    margin: 5px 0;
+}
+
+
+.options {
+    padding-left: 1px;
+}
+
+div.actions {
+    padding: 0;
+    margin: 4px 0 0 0;
+    clear: both;
+}
+
+.subnav-link {
+    font-weight: 600;
+    margin: 2px 0 ;
+    font-size: 12px;
+}
+.subnav-link:before {
+    content: "[";
+}
+.subnav-link:after {
+    content: "]";
+}
+
+.action-link {
+    font-weight: normal;
+    margin: 2px 0 ;
+    font-size: 12px;
+}
+.action-link:before {
+    content: "[";
+}
+.action-link:after {
+    content: "]";
+}
+
+.nav {
+  &.nav-links {
+    margin: 0.5em 0;
+
+    li {
+      float: left;
+
+      a, strong {
+        border-right: 1px solid #ccc;
+        padding: .2em 1em;
+        display: block;
+      }
+
+      a {
+        &:hover, &:active, &:focus {
+          background: none;
+          text-decoration: underline;
+        }
+      }
+
+      &:first-child {
+        a, strong {
+          padding-left: 0;
+        }
+      }
+
+      &:last-child {
+        a, strong {
+          border-right: 0;
+        }
+      }
+    }
+  }
+}
+
+div.main {
+  margin: 0;
+  min-height: 520px;
+}
+
+/*------------------------------------------------------------------*/
+/* for Bootstrap */
+/*------------------------------------------------------------------*/
+
+/* Add a tab container class, for a border around the entire tabset */
+.nav-tabs-container {
+    padding: 3px 0 0 0;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    /*.border-radius(4px);*/
+}
+
+.navbar-nav>li>a {
+  padding-top: 0;
+  padding-bottom: 0;
+  /* 50px is the DBAM Logo height */
+  line-height: 50px;
+}
+
+.navbar-text {
+  margin-top: 0;
+  margin-bottom: 0;
+  /* 50px is the DBAM Logo height */
+  line-height: 50px;
+}
+
+@media (max-width: 800px) {
+    .navbar-header {
+        float: none;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+        margin: 7.5px -15px;
+    }
+    .navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    /* since 3.1.0 */
+    .navbar-collapse.collapse.in {
+        display: block!important;
+    }
+    .collapsing {
+        overflow: hidden!important;
+    }
+}
+/*------------------------------------------------------------------*/
+
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.table-striped>tbody>tr.highlighted>td,
+.table-striped>tbody>tr.highlighted>th {
+  background-color: #bcbcbc;
+}
+
+.table-striped>tbody>tr.highlighted.less>td,
+.table-striped>tbody>tr.highlighted.less>th {
+  background-color: #e6e6e6;
+}

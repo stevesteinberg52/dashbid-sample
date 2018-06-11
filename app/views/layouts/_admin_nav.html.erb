@@ -1,0 +1,276 @@
+<div class="navbar navbar-default navbar-static-top" role="navigation">
+
+  <div id="env-info" class="hidden">
+    <% host = AppInfo.host.sub('.amazonaws.com', '') %>
+    <div class="nowrap">
+      <span class="admin-nav-label" style="background-color:#ff8080;">Admin</span>
+      <span class="admin-nav-label">HOST: <%= host %></span>
+      <% unless AppInfo.stage.production? %>
+        <span class="admin-nav-label">STAGE: <%= AppInfo.stage if !AppInfo.stage.production? %></span>
+      <% end %>
+      <span class="admin-nav-label" title="<%= "#{AppInfo.commit}" %>"><%="COMMIT: #{AppInfo.commit[0,7]}..." %></span>
+      <span class="admin-nav-label">DB TIME: <%= in_EST(Time.now,"%Y-%m-%d %H:%M %Z") %></span>
+    </div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <%= link_to 'DashBid Ad Manager', root_path, id: 'main-logo', class: 'navbar-brand' %>
+    </div>
+
+    <div class="navbar-collapse collapse nowrap">
+      <ul class="nav navbar-nav">
+
+        <li class="dropdown <%= active_menu2(['customers', 'customer_status', 'customer_generate_text', 'customer_margins']) %>">
+          <%= link_to raw('Customers' +("<b class= 'caret'></b>")), admin_customers_path, class: "dropdown-toggle active_menu2('customers')" %>
+          <ul class="dropdown-menu">
+            <li class="<%= active_menu2('customers', 'index') %>"><%= link_to 'Customers', admin_customers_path %></li>
+            <li class="<%= active_menu2('customers', 'new') %>"><%= link_to 'New Customer', new_admin_customer_path %></li>
+            <li class="<%= active_menu2('home', 'customer_status') %>">
+              <%= link_to 'Customer Status', customer_status_admin_home_index_path %>
+            </li>
+            <li class="<%= active_menu2('customer_domain_report', 'index') %>">
+              <%= link_to 'Customer Domain Spreadsheet', admin_customer_domain_report_index_path %>
+            </li>
+            <li class="<%= active_menu2('fpf', 'index') %>">
+              <%= link_to 'Customer Fraud Protection Fees', admin_fpf_index_path %>
+            </li>
+            <%= recent_items_for_nav(:customers) %>
+          </ul>
+        </li>
+
+        <li class="dropdown <%= active_menu2('placements') %>">
+          <%= link_to raw('Placements' + ("<b class= 'caret'></b>")), admin_placements_path,
+            class: "dropdown-toggle active_menu2('placements')"%>
+          <ul class="dropdown-menu">
+            <li class="<%= active_menu2('placements') %>"><%= link_to 'Placements', admin_placements_path %></li>
+            <li class="<%= active_menu2('placement_groups') %>"><%= link_to 'Placements - Groups', admin_placement_groups_path %></li>
+            <%= recent_items_for_nav(:placements) %>
+          </ul>
+        </li>
+
+        <li class="dropdown <%= active_menu2(['networks', 'network_data', 'network_reconciliations', 'uploads']) %>">
+          <%= link_to raw('Networks' +("<b class= 'caret'></b>")), admin_networks_path, class: "dropdown-toggle active_menu2('network')" %>
+          <ul class="dropdown-menu">
+            <li class="<%= active_menu2('networks') %>"><%= link_to 'Networks', admin_networks_path%></li>
+            <li class="<%= active_menu2('home', 'network_status') %>">
+              <%= link_to 'Network Status (dbam)', network_status_admin_home_index_path %>
+            </li>
+
+            <li class="divider"></li>
+
+            <li class="<%= active_menu2('network_reconciliations', 'index') %>">
+              <%= link_to 'Network Reconciliations', admin_network_reconciliations_path %>
+            </li>
+            <li class="<%= active_menu2('network_reconciliations', 'missing') %>">
+              <%= link_to 'Missing Network Reconciliations', missing_admin_network_reconciliations_path %>
+            </li>
+            <li class="<%= active_menu2('network_data', 'index') %>"><%= link_to 'Network Data', admin_network_data_path%></li>
+            <li class="<%= active_menu2('uploads') %>">
+              <%= link_to 'Network Uploads', admin_uploads_path%>
+            </li>
+            <% if policy(Navigation).user_can?(:see_reconciliation_team_actions) %>
+              <li class="<%= active_menu2('network_data', 'status') %>">
+                <%= link_to 'Network Data - Upload Status', status_admin_network_data_path %>
+              </li>
+            <% end %>
+            <% if policy(Navigation).user_can?(:see_finance_team_links) %>
+              <li class="<%= active_menu2('customer_statement_dates') %>">
+                <%= link_to 'Customer Statements', month_by_day_admin_customer_statement_dates_path%>
+              </li>
+            <% end %>
+            <li class="<%= active_menu2('margin_report_hourly') %>">
+              <%= link_to 'Hourly Margin Report', admin_margin_report_hourly_index_path%>
+            </li>
+          </ul>
+        </li>
+
+        <li class="dropdown <%= active_menu2('ad_sources') %>">
+          <%= link_to raw('Ad Sources' + ("<b class= 'caret'></b>")), admin_ad_sources_path,
+                      class: "dropdown-toggle active_menu2('ad_sources')" %>
+
+          <ul class="dropdown-menu">
+            <li class="<%= active_menu2('ad_sources', 'index') %>">
+              <%= link_to 'Ad Sources', admin_ad_sources_path %>
+            </li>
+
+            <li class="<%= active_menu2('ad_sources', 'player_sizes') %>">
+              <%= link_to 'Ad Sources - Player Sizes', player_sizes_admin_ad_sources_path %>
+            </li>
+            <%= recent_items_for_nav(:ad_sources) %>
+          </ul>
+        </li>
+
+        <li class="dropdown <%= active_menu2('data_explorers') %>">
+          <a href="#" class="dropdown-toggle <%= active_menu2('reports') %>" data-toggle="dropdown">Reports <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li class="<%= active_menu2('network_revenue_daily', 'index') %>">
+              <%= link_to 'Network Revenue - Daily', admin_network_revenue_daily_index_path %>
+            </li>
+            <li class="<%= active_menu2('data_explorers', 'network3') %>">
+              <%= link_to 'Network Revenue Graph (~Daily)', network3_admin_data_explorers_path %>
+            </li>
+            <li class="<%= active_menu2('pivot', 'network') %>"><%= link_to 'Network Pivot!', network_admin_pivot_index_path %></li>
+            <li class="<%= active_menu2('network_revenues', 'index') %>">
+              <%= link_to 'Network Revenue (~Monthly)', admin_network_revenues_path %>
+            </li>
+
+            <li class="divider"></li>
+            <li class="<%= active_menu2('margin_report_index', 'index') %>">
+              <%= link_to 'Margin Report', admin_margin_report_index_path %>
+            </li>
+            <li class="<%= active_menu2('margin_report_beta', 'index') %>">
+              <%= link_to 'Margin Report - BETA', admin_margin_report_beta_path %>
+            </li>
+
+            <li class="divider"></li>
+            <li class="<%= active_menu2('waterfall_reports', 'by_hour') %>">
+              <%= link_to 'Waterfall by Hour / Day / Month', by_hour_admin_waterfall_reports_path %>
+            </li>
+
+            <li class="<%= active_menu2('waterfall_reports', 'by_placements') %>">
+              <%= link_to 'Waterfall by Placement', by_placements_admin_waterfall_reports_path %>
+            </li>
+
+            <li class="<%= active_menu2('data_explorers', 'waterfall_hourly') %>">
+              <%= link_to 'Waterfall Hourly [No CC]', waterfall_hourly_admin_data_explorers_path %>
+            </li>
+            <li class="<%= active_menu2('data_explorers', 'waterfall_daily') %>">
+              <%= link_to 'Waterfall Daily [With CC]', waterfall_daily_admin_data_explorers_path %>
+            </li>
+
+            <li class="divider"></li>
+
+            <li class="<%= active_menu2('ad_source_hourly', 'index') %>">
+              <%= link_to 'Ad Source Hourly', admin_ad_source_hourly_path %>
+            </li>
+
+            <li class="<%= active_menu2('data_explorers', 'ad_source_daily') %>">
+              <%= link_to 'Ad Source Daily [With CC]', ad_source_daily_admin_data_explorers_path %>
+            </li>
+
+            <li class="divider"></li>
+
+            <li class="<%= active_menu2('domain_referrer', 'index') %>">
+              <%= link_to 'Domain Referrer', admin_domain_referrers_path %>
+            </li>
+
+            <li class="<%= active_menu2('domain_http_referrer', 'index') %>">
+              <%= link_to 'Domain Referrer (with HTTP_Referer)', admin_domain_http_referers_path %>
+            </li>
+
+            <% if policy(Navigation).user_can?(:see_td_queries_user_actions) %>
+              <li class="divider"></li>
+              <li class="<%= active_menu2('td_api', 'templates') %>">
+                <%= link_to 'Self Service Reports', admin_td_api_templates_path %>
+              </li>
+            <% end %>
+
+            <% if policy(Navigation).user_can?(:see_tableau_report) %>
+              <li class="divider"></li>
+              <li class="<%= active_menu2('tableau', 'index') %>">
+                <%= link_to 'Tableau Reports', admin_tableau_index_path %>
+              </li>
+            <% end %>
+
+            <li class="divider"></li>
+            <li class="<%= active_menu2('real_time', 'index') %>">
+              <%= link_to 'Real Time', admin_real_time_path %>
+            </li>
+          </ul>
+        </li>
+
+        <li class="dropdown <%= active_menu2(['countries', 'lists', 'domains', 'definitions', 'activity_logs']) %>">
+          <a href="#" class="dropdown-toggle <%= active_menu2('lookups') %>" data-toggle="dropdown">Other <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+
+            <li class="<%= active_menu2('activity_logs') %>">
+              <%= link_to 'Activity Log', admin_activity_logs_path %>
+            </li>
+
+            <li class="<%= active_menu2('lists', 'menu') %>">
+              <% if policy(Navigation).user_can?(:see_lists_link) %>
+                <%= link_to 'List Management', menu_admin_lists_path %>
+              <% else %>
+                <%= link_to 'List Management', '#', style: 'color: darkgrey; cursor: default;' %>
+              <% end %>
+            </li>
+
+            <li class="<%= active_menu2('dashbid_users') %>">
+              <%= link_to 'Dashbid Users', dashbid_list_admin_dashbid_users_path %>
+            </li>
+
+            <li class="<%= active_menu2('customer_users') %>">
+              <%= link_to 'Customer Users', customer_list_admin_customer_users_path %>
+            </li>
+
+            <li class="<%= active_menu2('network_users') %>">
+              <%= link_to 'Network Users', network_list_admin_network_users_path %>
+            </li>
+
+            <li class="divider"></li>
+
+            <li class="<%= active_menu2('resources') %>">
+              <%= link_to 'Help Resources', admin_resources_path %>
+            </li>
+          </ul>
+        </li>
+
+        <% if policy(Navigation).user_can?(:see_admin_dropdown) %>
+          <li class="dropdown <%= active_menu2(['users', 'users_roles']) %>">
+            <a>Admin-Only <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><%= link_to "Groups", admin_groups_path%></li>
+
+              <li><%= link_to "Mobile test version", admin_mobile_index_path, target: '_blank' %></li>
+
+              <li class="<%= active_menu2('countries') %>">
+                <%= link_to 'Countries', admin_countries_path %>
+              </li>
+
+              <% if policy(Navigation).user_can?(:see_users_roles_link) %>
+                <li class="<%= active_menu2('users_roles') %>">
+                  <%= link_to 'User Roles', admin_user_roles_path %>
+                </li>
+              <% end %>
+
+              <% if policy(Navigation).user_can?(:see_hidden_jobs_link) %>
+                <li><%= link_to 'Hidden Jobs Menu', admin_jobs_path %></li>
+                <li><%= link_to 'Health Checks Menu', admin_health_check_index_path %></li>
+                <li class="<%= active_menu2('jobs', 'mysql_processes') %>">
+                  <%= link_to "Active MySQL Processes (in new window)" , mysql_processes_admin_jobs_path, target: '_blank' %>
+                </li>
+                <li><%= link_to "SideKiq (in new window)" , '/admin/sidekiq', target: '_blank' %></li>
+              <% end %>
+
+              <li><%= link_to "Vpaids Repository" , admin_vpaids_path %></li>
+            </ul>
+          </li>
+        <% end %>
+
+        <% if policy(Navigation).user_can?(:see_admin_dropdown) %>
+          <li><%= link_to 'Env info', 'javascript:;', id: 'toggle-env-info' %></li>
+        <% end %>
+
+        <% if current_staff_user %>
+          <li>
+            <%= link_to 'Revert Impersonation!', impersonate_engine.revert_impersonate_user_path,
+                        method: :delete, style: 'color:#f00', class: 'hidden-xs hidden-sm '%>
+          </li>
+        <% end %>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><%= link_to(fa_icon2([:'gear', :lg, :fw]), edit_user_registration_path, title: "Manage #{current_user.email}") %></li>
+        <li><%= link_to(fa_icon2([:'sign-out', :lg, :fw]), destroy_user_session_path, method: :delete) %></li>
+      </ul>
+    </div>
+  </div>
+</div>

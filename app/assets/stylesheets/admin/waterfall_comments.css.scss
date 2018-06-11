@@ -1,0 +1,45 @@
+.list-group {
+  .list-group-item {
+    display: none;
+    padding: .2em 1em;
+
+    &.recent-comment {
+      display: block;
+    }
+  }
+}
+
+.waterfall-comment-user-and-date {
+  font-size: .8em;
+  color: #999;
+}
+
+.waterfall-comment-content ~ .waterfall-comment-changes {
+  border-top: 1px dotted #ccc;
+  padding: .5em 0 0;
+}
+
+.waterfall-comment-changes {
+  overflow: auto;
+
+  .waterfall-comment-metrics, .waterfall-comment-ad-sources {
+    float: left;
+    width: 50%;
+  }
+
+  .waterfall-comment-ad-sources li {
+    font-family: monospace;
+  }
+}
+
+.waterfall-comment-metrics ul {
+  list-style-type: none;
+  overflow: auto;
+  padding: .5em;
+
+  li {
+    float: left;
+    margin: 0 .5em 0 0;
+    width: 5em;
+  }
+}

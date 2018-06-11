@@ -1,0 +1,131 @@
+<% if @report_by %>
+  <%= link_to 'Export to Excel', @query_params.merge({:action => 'excel'}), :class => 'subnav-link' %>
+  <hr>
+<% end %>
+
+
+<%= form_tag admin_margin_report_beta_path, method: :get, id: 'margin-report-form', class: 'form' do %>
+  <div class="form-group">
+    <%= label_tag :report_by, 'Report By:' %>
+    <br/>
+    <%= select_tag :report_by,
+                   options_for_select(
+                           [ ['Date', 'date'], ['Customer', 'customer'], ['Placement', 'placement'], ['Network', 'network'], ['Ad Source', 'ad_source'] ],
+                           @report_by),
+                   class: 'fixed-width' %>
+  </div>
+
+  <div class="form-group nowrap">
+    <div>
+      <%= label_tag :date_range, 'Date Range:' %>
+      <%= select_tag :date_range,
+                     options_for_select(
+                             [ ['This Month', 'thismonth'],
+                               ['Last Month', 'lastmonth'],
+                               ['Yesterday', 'yesterday'],
+                               ['Custom', 'custom'] ], @date_range)  %>
+    </div>
+    <div style="padding-top: 2px;">
+      <%= date_select_tag(:start_date) %>:<%= date_select_tag(:end_date) %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :customer_id, 'Customer:' %>
+    <% if @customer_all %>
+      <span class="bold">ALL</span>
+    <% else %>
+      <br/>
+      <%= select_tag :customer_id,
+                     options_for_select(customer_options(:all => 'true', :none => 'false'), @customer_id),
+                      id: 'customer_id', class: 'fixed-width', style: 'width: 205px;'  %>
+    <% end %>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :team, 'Team:' %>
+    <br/>
+    <%= select_tag :team,
+                   options_for_select(TeamColor.color_names, @team),
+                   prompt: 'ALL',
+                   id: 'team',
+                   class: 'fixed-width'  %>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :network_id, 'Network:' %>
+    <% if @network_all %>
+      <span class="bold">ALL</span>
+    <% else %>
+      <br/>
+      <%= select_tag :network_id,
+                     options_for_select(network_options(:all => 'true', :none => 'false'), @network_id),
+                     id: 'network_id', class: 'fixed-width', style: 'width: 205px;'  %>
+    <% end %>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :dbam_symbol, 'Ad Source:' %>
+    <br/>
+    <%= select_tag :dbam_symbol,
+                   options_from_collection_for_select(@ad_sources, 'dbam_symbol', 'dbam_symbol', @dbam_symbol),
+                   :include_blank => true,
+                   :prompt => 'ALL',
+                   id: 'dbam_symbol', class: 'fixed-width'  %>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :group_id, 'Placement Groups:' %>
+    <br/>
+    <%= select_tag :group_id,
+                   options_from_collection_for_select(@groups, 'id', 'name', params[:group_id]),
+                   id: 'group_id', class: 'fixed-width', multiple: true, data: {placeholder: "ALL" }, style: 'width: 205px;'   %>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :mobile_only, 'Mobile Ad Sources:' %>
+    <br/>
+    <%= select_tag :mobile_only,
+                   options_for_select(
+                           [ ['Included', 'included'],
+                             ['Excluded', 'excluded'],
+                             ['Only', 'only'] ], @mobile_only),
+                   class: 'fixed-width' %>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :mobile_placements_only, 'Mobile Placements:' %>
+    <br/>
+    <%= select_tag :mobile_placements_only,
+                   options_for_select(
+                           [ ['Included', 'included'],
+                             ['Excluded', 'excluded'],
+                             ['Only', 'only'] ], @mobile_placements_only),
+                   class: 'fixed-width' %>
+  </div>
+
+  <div class="form-group nowrap">
+    <%= label_tag :show_model_1, 'Show Model 1 columns?' %>
+    <br/>
+    <%= select_tag :show_model_1,
+                   options_for_select(
+                           [ ['No', 'no'],
+                             ['Yes', 'yes'] ], @show_model_1),
+                   class: 'fixed-width' %>
+  </div>
+
+  <div class="form-group">
+    <%= submit_tag('Apply', :class => 'btn btn-xs btn-primary', 'data-disable-with' => 'Running...') %>
+    <%= link_to t('helpers.forms.reset'), {type: 'reset'}, class: 'reset-link' %>
+  </div>
+
+<% end %>
+
+<script>
+  $(function() {
+    <%= date_select_js %>
+    App.admin_margin_report.filter_form();
+
+    App.global.addLoadingToForm("#filter_form", '<%= image_tag "loading.gif", :style => "display: none;", :alt => "loading", :id => "loading_image" %>');
+  });
+</script>

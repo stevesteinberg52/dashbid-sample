@@ -1,0 +1,109 @@
+#customer-status {
+  h1 {
+    margin: .5em 0;
+  }
+
+  #filter-by-field {
+    width: 12em;
+    display: inline;
+  }
+
+  #key-field-value {
+    width: 5em;
+    padding: .5em;
+    display: inline;
+  }
+
+  #customers-name-filter {
+    width: 100%;
+    padding: .5em;
+    border-bottom: 1px dotted #ccc;
+    outline: none;
+
+    &::-webkit-input-placeholder {
+      color: #ccc;
+      font-size: 10px;
+    }
+
+    &:-moz-placeholder { /* Firefox 18- */
+      color: red;
+    }
+
+    &::-moz-placeholder {  /* Firefox 19+ */
+      color: red;
+    }
+
+    &:-ms-input-placeholder {
+      color: red;
+    }
+  }
+
+  #customers-filter-list {
+    height: 15em;
+    overflow: auto;
+    border: 1px solid #ccc;
+    border-top: 0;
+    margin: 0 0 1em;
+    padding: .5em;
+
+    label {
+      font-weight: normal;
+      cursor: pointer;
+    }
+
+    .empty {
+      text-align: center;
+      line-height: 28em;
+    }
+  }
+
+  #select-all {
+    font-weight: normal;
+    float: right;
+    cursor: pointer;
+  }
+
+  .customer-graph {
+    float: left;
+    width: 21.28em;
+    border: 1px solid #ccc;
+    margin: 1%;
+    text-align: center;
+    box-sizing: border-box;
+    zoom: reset;
+
+    .average-info {
+      font-size: .8em;
+      color: #666;
+      float: left;
+      margin: 0 0 0 1em;
+
+      &:last-child {
+        float: right;
+        margin: 0 1em 0 0;
+      }
+    }
+  }
+}
+
+#customers-status-top-bar {
+  overflow: auto;
+  padding: 0 0 .5em;
+  margin: 0 0 .5em;
+  border-bottom: 1px dotted #ccc;
+
+  p {
+    font-size: .8em;
+    margin: 0;
+  }
+
+  #customers-date-range {
+    float: left;
+    width: 50%;
+  }
+
+  #customer-cursor {
+    float: right;
+    width: 50%;
+  }
+}

@@ -1,0 +1,70 @@
+staging_default: &staging_defaults
+  sidekiq_cron:
+    QueryWorker_5000:
+      cron:  '50 * * * *'
+      class: 'QueryWorker'
+    QueryNotifier:
+      cron:  '*/3 * * * *'
+      class: 'QueryNotifierWorker'
+
+production:
+  pool_server: prod-dbam-app-001.a0ttas.0001.use1.cache.amazonaws.com
+  sidekiq_cron:
+    Metadata:
+      cron:  '15 * * * *'
+      class: 'MetadataWorker'
+
+    HealthCheckTdAsEvents:
+      cron:  '5 * * * *'
+      class: 'HealthCheckWorker::TdAsEvents'
+    HealthCheckTdWfEvents:
+      cron:  '6 * * * *'
+      class: 'HealthCheckWorker::TdWfEvents'
+
+    MarginReport_7am:
+      cron:  '0 12 * * *'
+      class: 'GenerateOutdatedDaysDataWorker'
+    MarginReport_1130am:
+      cron:  '30 16 * * *'
+      class: 'GenerateOutdatedDaysDataWorker'
+    MarginReport_4pm:
+      cron:  '0 21 * * *'
+      class: 'GenerateOutdatedDaysDataWorker'
+    MarginReport_930pm:
+      cron:  '30 02 * * *'
+      class: 'GenerateOutdatedDaysDataWorker'
+
+    QueryWorker_5000:
+      cron:  '50 * * * *'
+      class: 'QueryWorker'
+    QueryNotifier:
+      cron:  '*/2 * * * *'
+      class: 'QueryNotifierWorker'
+    CustomerStatementForLastMonths_every_3_hours:
+      cron:  '0 */3 * * *'
+      class: 'CustomerStatementForLastMonthsWorker'
+    TestAdsourcesImpressionsAlert:
+      cron:  '*/20 * * * *'
+      class: 'TestAdSourceAlertWorker'
+
+    NetworkApisWorker0300:
+      cron:  '0 08 * * *'
+      class: 'NetworkApisWorker'
+    NetworkApisWorker0830:
+      cron:  '30 13 * * *'
+      class: 'NetworkApisWorker'
+    NetworkApisWorker1500:
+      cron:  '0 20 * * *'
+      class: 'NetworkApisWorker'
+staging:
+  <<: *staging_defaults
+  pool_server: staging-dbam-app-002.a0ttas.0001.use1.cache.amazonaws.com
+developer:
+  <<: *staging_defaults
+  pool_server: 127.0.0.1
+
+local:
+  pool_server: 127.0.0.1
+
+test:
+  pool_server: 127.0.0.1

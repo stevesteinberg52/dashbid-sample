@@ -1,0 +1,333 @@
+<% dividing_border_style = '2px solid black' %>
+
+<table id="margin-report" class="table-with-borders" style="border:<%= dividing_border_style %>;">
+  <thead>
+    <tr style="border-bottom:<%= dividing_border_style %>;">
+      <% case params[:report_by] %>
+      <% when 'customer' %>
+        <th class="td-small-font" rowspan="2"></th>
+        <th class="td-small-font" rowspan="2" style="border-right:<%= dividing_border_style %>;">
+          <div><%= image_tag 'dot_clear.gif', :style => 'width:200px; height:1px;' %></div>
+          Customer
+        </th>
+
+      <% when 'network' %>
+        <th class="td-small-font" rowspan="2" style="border-right:<%= dividing_border_style %>;">Network</th>
+
+      <% when 'placement' %>
+        <th class="td-small-font" rowspan="2">
+          <div><%= image_tag 'dot_clear.gif', :style => 'width:250px; height:1px;' %></div>
+          Placement
+        </th>
+        <th class="td-small-font" rowspan="2"></th>
+        <th class="td-small-font" rowspan="2">
+          <div><%= image_tag 'dot_clear.gif', :style => 'width:150px; height:1px;' %></div>
+          Customer
+        </th>
+
+      <% when 'ad_source' %>
+        <th class="td-small-font" rowspan="2">Dbam Symbol</th>
+        <th class="td-small-font" rowspan="2" style="border-right:<%= dividing_border_style %>;">External ID</th>
+
+      <% else %>
+        <th class="td-small-font" rowspan="2" style="border-right:<%= dividing_border_style %>;">
+          <% if @by_date == 'network' %>
+            Network <br/> Date
+          <% else %>
+            Dbam Date <br/> (EST)
+          <% end %>
+        </th>
+      <% end %>
+
+      <th class="td-small-font" colspan="7" style="border-right:<%= dividing_border_style %>;">Model 2 - reconciled network data</th>
+      <% if @show_model_1 == 'yes' %>
+        <th class="td-small-font" colspan="6" style="border-right:<%= dividing_border_style %>;">Model 1 - network data</th>
+      <% end %>
+      <th class="td-small-font" colspan="5" style="border-right:<%= dividing_border_style %>;">Model 0 - no loss / no reconciliation</th>
+    </tr>
+
+    <tr style="border-bottom:<%= dividing_border_style %>;">
+      <!-- Model 2 -->
+      <th class="td-small-font">Network<br/>Imps</th>
+      <th class="td-small-font">Network<br/>Rev</th>
+      <th class="td-small-font">Adj Dbam<br/>Imps</th>
+      <th class="td-small-font" title="percent reconciled">%<br/>Reconc</th>
+      <th class="td-small-font">Cust<br/>Payout</th>
+      <th class="td-small-font">Margin</th>
+      <th class="td-small-font" style="border-right:<%= dividing_border_style %>;">Margin %</th>
+
+      <% if @show_model_1 == 'yes' %>
+        <!-- Model 1 -->
+        <th class="td-small-font">Network<br/>Imps</th>
+        <th class="td-small-font">Network<br/>Rev</th>
+        <th class="td-small-font">Dbam<br/>Imps</th>
+        <th class="td-small-font">Cust<br/>Payout</th>
+        <th class="td-small-font">Margin</th>
+        <th class="td-small-font" style="border-right:<%= dividing_border_style %>;">Margin %</th>
+      <% end %>
+
+      <!-- Model 0 -->
+      <th class="td-small-font">Imps</th>
+      <th class="td-small-font">Network<br/>Rev</th>
+      <th class="td-small-font">Cust<br/>Payout</th>
+      <th class="td-small-font">Margin</th>
+      <th class="td-small-font" style="border-right:<%= dividing_border_style %>;">Margin %</th>
+    </tr>
+  </thead>
+
+  <% @data.each do |row| %>
+    <tr class="td-small-font">
+      <% case params[:report_by] %>
+      <% when 'customer' %>
+        <td class="td-left td-small-font nowrap">
+          <% if row.team %>
+            <% bgcolor = team_color(row.team) %>
+            <% border = "1px solid black" if bgcolor %>
+            <div style="background-color:<%= bgcolor %>; border:<%= border %>; margin-right: 3px;"
+                 title="<%= team_members(row.team) %>">
+              <%= image_tag('dot_clear.gif', border: 0, width: 15, height: 15) %>
+            </div>
+          <% end %>
+        </td>
+
+        <td class="td-left td-small-font bold" style="border-right:<%= dividing_border_style %>;">
+          <% params_hash = @params_hash.merge({:report_by => 'placement', :customer_id => row.customer_id}) %>
+          <%= link_to "#{row.customer_name} #{bracketed_id(row.customer_id, 'c')}",
+                      admin_margin_report_beta_path(params_hash), :title => 'by Placement' %>
+        </td>
+
+      <% when 'network' %>
+        <td class="td-left td-small-font bold" style="border-right:<%= dividing_border_style %>;">
+          <% params_hash = @params_hash.merge({:report_by => 'ad_source', :network_id => row.network_id}) %>
+          <%= link_to "#{row.network_name} #{bracketed_id(row.network_id, 'n')}",
+                      admin_margin_report_beta_path(params_hash), :title => 'by Ad Source' %>
+        </td>
+
+      <% when 'placement' %>
+        <td class="td-left td-small-font bold">
+          <% params_hash = @params_hash.merge({:report_by => 'network', :placement_id => row.placement_id}) %>
+          <%= link_to "#{row.placement_name} #{bracketed_id(row.placement_id, 'p')}",
+                      admin_margin_report_beta_path(params_hash), :title => 'by Network' %>
+        </td>
+        <td class="td-left td-small-font nowrap">
+          <% if row.team %>
+            <% bgcolor = team_color(row.team) %>
+            <% border = "1px solid black" if bgcolor %>
+            <div style="background-color:<%= bgcolor %>; border:<%= border %>; margin-right: 3px;"
+                 title="<%= team_members(row.team) %>">
+              <%= image_tag('dot_clear.gif', border: 0, width: 15, height: 15) %>
+            </div>
+          <% end %>
+        </td>
+
+        <td class="td-left td-small-font">
+          <%= "#{row.customer_name} #{bracketed_id(row.customer_id, 'c')} " %>
+        </td>
+
+      <% when 'ad_source' %>
+        <td class="td-left td-small-font bold">
+          <% params_hash = @params_hash.merge({:report_by => 'date', :dbam_symbol => row.dbam_symbol}) %>
+          <%= link_to row.dbam_symbol || '', admin_margin_report_beta_path(params_hash), :title => 'by Date' %>
+        </td>
+
+        <td class="td-left td-small-font"
+            style="border-right:<%= dividing_border_style %>; word-wrap:break-word; max-width:200px;">
+          <%= row.external_id %>
+        </td>
+
+      <% else %>
+        <% date_string = row.date_est.strftime('%Y-%m-%d') %>
+        <td class="td-center bold nowrap td-small-font" style="border-right:<%= dividing_border_style %>;">
+          <% if @by_date == 'network' %>
+            <% params_hash = @params_hash.merge({:report_by => 'network', :date_range => 'custom', :start_date => date_string, :end_date => date_string}) %>
+            <%= link_to date_string, admin_margin_report_beta_path(params_hash), :title => 'by Network' %>
+          <% else %>
+            <% params_hash = @params_hash.merge({:report_by => 'customer', :date_range => 'custom', :start_date => date_string, :end_date => date_string}) %>
+            <%= link_to date_string, admin_margin_report_beta_path(params_hash), :title => 'by Customer' %>
+          <% end %>
+        </td>
+      <% end %>
+
+      <% revenue_in_m2 = row.revenue_in_m2 || 0 %>
+      <% pay_out_m2 = row.pay_out_m2 || 0 %>
+      <% margin_m2 = revenue_in_m2 - pay_out_m2 %>
+      <% margin_color = margin_m2 >= 0 ?  'green' : 'red' %>
+      <% margin_percent = (margin_m2 * BigDecimal(100) / revenue_in_m2) if revenue_in_m2 > 0 %>
+      <% reconciled_percent = (row.reconciled_impressions * BigDecimal(100) / row.impressions_m0) if row.impressions_m0 > 0 %>
+      <td class="td-right td-small-font">
+        <%= number_with_precision(row.network_impressions_m2, :precision => 0, :delimiter => ',') %>
+      </td>
+      <td class="td-right td-small-font">
+        <%= number_to_currency(revenue_in_m2 || 0, :precision => 0) %>
+      </td>
+      <td class="td-right td-small-font">
+        <%= number_with_precision(row.dbam_impressions_m2, :precision => 0, :delimiter => ',') %>
+      </td>
+      <td class="td-right nowrap td-small-font">
+        <%= reconciled_percent ? number_to_percentage(reconciled_percent, :precision => 2) : '-' %>
+      </td>
+      <td class="td-right td-small-font">
+        <%= number_to_currency(pay_out_m2, :precision => 0) %>
+      </td>
+      <td class="td-right nowrap td-small-font" style="color:<%= margin_color %>;">
+        <%= number_to_currency(margin_m2, :precision => 0) %>
+      </td>
+      <td class="td-right nowrap td-small-font" style="color:<%= margin_color %>; border-right:<%= dividing_border_style %>;">
+        <%= margin_percent ? number_to_percentage(margin_percent, :precision => 2) : 'Inf%' %>
+      </td>
+
+      <% if @show_model_1 == 'yes' %>
+        <!-- Model 1 -->
+        <% revenue_in_m1 = row.revenue_in_m1 || 0 %>
+        <% pay_out_m1 = row.pay_out_m1 || 0 %>
+        <% margin_m1 = revenue_in_m1 - pay_out_m1 %>
+        <% margin_color = margin_m1 >= 0 ?  'green' : 'red' %>
+        <% margin_percent = (margin_m1 * BigDecimal(100) / revenue_in_m1) if revenue_in_m1 > 0 %>
+        <td class="td-right td-small-font">
+          <%= number_with_precision(row.network_impressions_m1, :precision => 0, :delimiter => ',') %>
+        </td>
+        <td class="td-right td-small-font">
+          <%= number_to_currency(revenue_in_m1 || 0, :precision => 0) %>
+        </td>
+        <td class="td-right td-small-font">
+          <%= number_with_delimiter(row.dbam_impressions_m1.to_i, :precision => 0) %>
+          <%#= number_with_precision(row.dbam_impressions_m1, :precision => 2, :delimiter => ',') %>
+        </td>
+        <td class="td-right td-small-font">
+          <%= number_to_currency(pay_out_m1, :precision => 0) %>
+        </td>
+        <td class="td-right nowrap td-small-font" style="color:<%= margin_color %>;">
+          <%= number_to_currency(margin_m1, :precision => 0) %>
+        </td>
+        <td class="td-right nowrap td-small-font" style="color:<%= margin_color %>; border-right:<%= dividing_border_style %>;">
+          <%= margin_percent ? number_to_percentage(margin_percent, :precision => 2) : 'Inf%' %>
+        </td>
+      <% end %>
+
+      <% revenue_in_m0 = row.revenue_in_m0 || 0 %>
+      <% pay_out_m0 = row.pay_out_m0 || 0 %>
+      <% margin_m0 = revenue_in_m0 - pay_out_m0 %>
+      <% margin_color = margin_m0 >= 0 ?  'green' : 'red' %>
+      <% margin_percent = (margin_m0 * BigDecimal(100) / revenue_in_m0) if revenue_in_m0 > 0 %>
+      <td class="td-right td-small-font">
+        <%= number_with_delimiter(row.impressions_m0, :precision => 0) %>
+      </td>
+      <td class="td-right td-small-font">
+        <%= number_to_currency(revenue_in_m0 || 0, :precision => 0) %>
+      </td>
+      <td class="td-right td-small-font">
+        <%= number_to_currency(pay_out_m0, :precision => 0) %>
+      </td>
+      <td class="td-right nowrap td-small-font" style="color:<%= margin_color %>;">
+        <%= number_to_currency(margin_m0, :precision => 0) %>
+      </td>
+      <td class="td-right nowrap td-small-font" style="color:<%= margin_color %>; border-right:<%= dividing_border_style %>;">
+        <%= margin_percent ? number_to_percentage(margin_percent, :precision => 2) : 'Inf%' %>
+      </td>
+
+    </tr>
+  <%end%>
+
+  <tr style="border-top:<%= dividing_border_style %>;">
+    <% case params[:report_by] %>
+    <% when 'customer' %>
+      <td colspan="2" class="bold td-center td-small-font" style="border-right:<%= dividing_border_style %>;"><%= pluralize(@data.size, 'customer') %></td>
+    <% when 'network' %>
+      <td colspan="1" class="bold td-center td-small-font" style="border-right:<%= dividing_border_style %>;"><%= pluralize(@data.size, 'network') %></td>
+    <% when 'placement' %>
+      <td colspan="3" class="bold td-center td-small-font" style="border-right:<%= dividing_border_style %>;"><%= pluralize(@data.size, 'placement') %></td>
+    <% when 'ad_source' %>
+      <td colspan="2" class="bold td-center td-small-font" style="border-right:<%= dividing_border_style %>;"><%= pluralize(@data.size, 'ad source') %></td>
+    <% else %>
+      <td class="bold td-center td-small-font" style="border-right:<%= dividing_border_style %>;"><%= pluralize(@data.size, 'day') %></td>
+    <%end%>
+
+    <% total_revenue_in_m2 = @data.map{|row| row.revenue_in_m2 || 0.00}.reduce(0, :+) %>
+    <% total_pay_out_m2 = @data.map{|row| row.pay_out_m2 || 0.00}.reduce(0, :+) %>
+    <% total_margin_m2 = total_revenue_in_m2 - total_pay_out_m2 %>
+    <% total_margin_color_m2 = total_margin_m2 >= 0 ?  'green' : 'red' %>
+    <% total_margin_percent_m2 = (total_margin_m2 * BigDecimal(100) / total_revenue_in_m2) if total_revenue_in_m2 > 0 %>
+
+    <% total_impressions_m0 = @data.map{|row| row.impressions_m0 || 0}.reduce(0, :+) %>
+    <% total_reconciled_impressions = @data.map{|row| row.reconciled_impressions || 0}.reduce(0, :+) %>
+
+    <% total_reconciled_percent = (total_reconciled_impressions * BigDecimal(100) / total_impressions_m0) if total_impressions_m0 > 0 %>
+
+    <td class="bold td-right td-small-font">
+      <%= number_with_precision(@data.map{|row| row.network_impressions_m2 || 0}.reduce(0, :+), :precision => 0, :delimiter => ',') %>
+    </td>
+    <td class="bold td-right td-small-font">
+      <%= number_to_currency(total_revenue_in_m2, :precision => 0) %>
+    </td>
+    <td class="bold td-right td-small-font">
+      <%= number_with_precision(@data.map{|row| row.dbam_impressions_m2 || 0}.reduce(0, :+), :precision => 0, :delimiter => ',') %>
+    </td>
+    <td class="bold td-right td-small-font">
+      <%= total_reconciled_percent ? number_to_percentage(total_reconciled_percent, :precision => 2) : '-' %>
+    </td>
+    <td class="bold td-right td-small-font">
+      <%= number_to_currency(total_pay_out_m2, :precision => 0) %>
+    </td>
+    <td class="bold td-right nowrap td-small-font" style="color:<%= total_margin_color_m2 %>;">
+      <%= number_to_currency(total_margin_m2, :precision => 0) %>
+    </td>
+    <td class="bold td-right nowrap td-small-font" style="color:<%= total_margin_color_m2 %>; border-right:<%= dividing_border_style %>;">
+      <%= number_to_percentage(total_margin_percent_m2, :precision => 2) %>
+    </td>
+
+    <% if @show_model_1 == 'yes' %>
+      <% total_revenue_in_m1 = @data.map{|row| row.revenue_in_m1 || 0.00}.reduce(0, :+) %>
+      <% total_pay_out_m1 = @data.map{|row| row.pay_out_m1 || 0.00}.reduce(0, :+) %>
+      <% total_margin_m1 = total_revenue_in_m1 - total_pay_out_m1 %>
+      <% total_margin_color_m1 = total_margin_m1 >= 0 ?  'green' : 'red' %>
+      <% total_margin_percent_m1 = (total_margin_m1 * BigDecimal(100) / total_revenue_in_m1) if total_revenue_in_m1 > 0 %>
+      <td class="bold td-right td-small-font">
+        <%= number_with_precision(@data.map{|row| row.network_impressions_m1 || 0}.reduce(0, :+), :precision => 0, :delimiter => ',') %>
+      </td>
+      <td class="bold td-right td-small-font">
+        <%= number_to_currency(total_revenue_in_m1, :precision => 0) %>
+      </td>
+      <td class="bold td-right td-small-font">
+        <%= number_with_delimiter( @data.map{|row| row.dbam_impressions_m1.to_i || 0}.reduce(0, :+), :precision => 0 ) %>
+        <%#= number_with_precision(@data.map{|row| row.dbam_impressions_m1 || 0}.reduce(0, :+), :precision => 2, :delimiter => ',') %>
+      </td>
+      <td class="bold td-right td-small-font">
+        <%= number_to_currency(total_pay_out_m1, :precision => 0) %>
+      </td>
+      <td class="bold td-right nowrap td-small-font" style="color:<%= total_margin_color_m1 %>;">
+        <%= number_to_currency(total_margin_m1, :precision => 0) %>
+      </td>
+      <td class="bold td-right nowrap td-small-font" style="color:<%= total_margin_color_m1 %>; border-right:<%= dividing_border_style %>;">
+        <%= number_to_percentage(total_margin_percent_m1, :precision => 2) %>
+      </td>
+    <% end %>
+
+    <% total_revenue_in_m0 = @data.map{|row| row.revenue_in_m0 || 0.00}.reduce(0, :+) %>
+    <% total_pay_out_m0 = @data.map{|row| row.pay_out_m0 || 0.00}.reduce(0, :+) %>
+    <% total_margin_m0 = total_revenue_in_m0 - total_pay_out_m0 %>
+    <% total_margin_color_m0 = total_margin_m0 >= 0 ?  'green' : 'red' %>
+    <% total_margin_percent_m0 = (total_margin_m0 * BigDecimal(100) / total_revenue_in_m0) if total_revenue_in_m0 > 0 %>
+    <td class="bold td-right td-small-font">
+      <%= number_with_delimiter( @data.map{|row| row.impressions_m0 || 0}.reduce(0, :+), :precision => 0 ) %>
+    </td>
+    <td class="bold td-right td-small-font">
+      <%= number_to_currency(total_revenue_in_m0, :precision => 0) %>
+    </td>
+    <td class="bold td-right td-small-font">
+      <%= number_to_currency(total_pay_out_m0, :precision => 0) %>
+    </td>
+    <td class="bold td-right nowrap td-small-font" style="color:<%= total_margin_color_m0 %>;">
+      <%= number_to_currency(total_margin_m0, :precision => 0) %>
+    </td>
+    <td class="bold td-right nowrap td-small-font" style="color:<%= total_margin_color_m0 %>; border-right:<%= dividing_border_style %>;">
+      <%= number_to_percentage(total_margin_percent_m0, :precision => 2) %>
+    </td>
+  </tr>
+
+</table>
+
+<script>
+  $(function() {
+    App.admin_margin_report.data_table();
+  });
+</script>
