@@ -1,0 +1,87 @@
+font_size = 14
+style_bold      = wb.styles.add_style b: true, :sz=>font_size
+style_heading   = wb.styles.add_style b: true, alignment: { horizontal: :center }, :sz=>font_size
+
+style_plain     = wb.styles.add_style :sz=>font_size
+style_center    = wb.styles.add_style :alignment => { :horizontal => :center }, :sz=>font_size
+style_date      = wb.styles.add_style :format_code => 'yyyy-mm-dd', :sz=>font_size
+style_currency  = wb.styles.add_style :num_fmt => 8, :sz=>font_size
+style_percent   = wb.styles.add_style :num_fmt => 9, :alignment => { :horizontal => :center }, :sz=>font_size
+style_number    = wb.styles.add_style :num_fmt => 3, :sz=>font_size
+
+style_currency_bold = wb.styles.add_style b: true, :num_fmt => 8, :sz=>font_size
+style_percent_bold  = wb.styles.add_style b: true, :num_fmt => 9, :sz=>font_size
+style_number_bold   = wb.styles.add_style b: true, :num_fmt => 3, :sz=>font_size
+
+row_array = []
+row_array << {:col => 'A', :heading => 'ID', :cell_style => style_center,
+              :cell => lambda {|row, row_num| row[:network_id]} }
+
+row_array << {:col => 'B', :heading => 'Network', :cell_style => style_plain, :total_style => style_bold,
+              :cell => lambda {|row, row_num| row[:network_name]},
+              :total => lambda {|start_row, end_row, total_row| "TOTAL / AVG"} }
+
+row_array << {:col => 'C', :heading => 'Total Imp', :cell_style => style_number, :total_style => style_number_bold,
+              :cell => lambda {|row, row_num| row[:impressions]},
+              :total => lambda {|start_row, end_row, total_row| "=SUM(C#{start_row.to_s}..C#{end_row.to_s})"} }
+
+row_array << {:col => 'D', :heading => 'Total Rev', :cell_style => style_currency, :total_style => style_currency_bold,
+              :cell => lambda {|row, row_num| row[:revenue]},
+              :total => lambda {|start_row, end_row, total_row| "=SUM(D#{start_row.to_s}..D#{end_row.to_s})"} }
+
+row_array << {:col => 'E', :heading => 'Avg CPM', :cell_style => style_currency, :total_style => style_currency_bold,
+              :cell => lambda {|row, row_num| "=D#{row_num.to_s}/C#{row_num.to_s}*1000"},
+              :total => lambda {|start_row, end_row, total_row| "=D#{total_row.to_s}/C#{total_row.to_s}*1000"} }
+
+row_array << {:col => 'F', :heading => 'Collected', :cell_style => style_currency, :total_style => style_currency_bold,
+              :total => lambda {|start_row, end_row, total_row| "=SUM(F#{start_row.to_s}..F#{end_row.to_s})"} }
+
+row_array << {:col => 'G', :heading => 'W/O', :cell_style => style_currency, :total_style => style_currency_bold,
+              :total => lambda {|start_row, end_row, total_row| "=SUM(G#{start_row.to_s}..G#{end_row.to_s})"} }
+
+row_array << {:col => 'H', :heading => 'Expense', :cell_style => style_currency, :total_style => style_currency_bold,
+              :cell => lambda {|row, row_num| "=D#{row_num.to_s} - F#{row_num.to_s} - G#{row_num.to_s}"},
+              :total => lambda {|start_row, end_row, total_row| "=SUM(H#{start_row.to_s}..H#{end_row.to_s})"} }
+
+row_array << {:col => 'I', :heading => 'Bill/Record', :cell_style => style_plain }
+row_array << {:col => 'J', :heading => 'INV #', :cell_style => style_plain }
+
+row_array << {:col => 'K', :heading => '' }
+
+row_array << {:col => 'L', :heading => 'Mobile Imp', :cell_style => style_number, :total_style => style_number_bold,
+              :cell => lambda {|row, row_num| row[:mobile_impressions]},
+              :total => lambda {|start_row, end_row, total_row| "=SUM(L#{start_row.to_s}..L#{end_row.to_s})"} }
+
+row_array << {:col => 'M', :heading => 'Mobile Rev', :cell_style => style_currency, :total_style => style_currency_bold,
+              :cell => lambda {|row, row_num| row[:mobile_revenue]},
+              :total => lambda {|start_row, end_row, total_row| "=SUM(M#{start_row.to_s}..M#{end_row.to_s})"} }
+
+row_array << {:col => 'N', :heading => 'Mobile CPM', :cell_style => style_currency, :total_style => style_currency_bold,
+              :cell => lambda {|row, row_num| "=M#{row_num.to_s}/L#{row_num.to_s}*1000"},
+              :total => lambda {|start_row, end_row, total_row| "=M#{total_row.to_s}/L#{total_row.to_s}*1000"} }
+
+column_headings = row_array.map { |x| x[:heading] }
+row_styles = row_array.map { |x| x[:cell_style] }
+total_styles = row_array.map { |x| x[:total_style] }
+
+wb.add_worksheet(name: name) do |sheet|
+  sheet.add_row column_headings, :style => style_heading
+
+  row_num = 1
+  first_data_row = 2
+  output.each do |record|
+    row_num += 1
+    row_cells = row_array.map { |x| x[:cell] ? x[:cell].call(record, row_num) : nil }
+    sheet.add_row row_cells, :style => row_styles
+  end
+
+  last_data_row = row_num
+
+  row_num += 1
+  sheet.add_row [] # blank row
+
+  row_num += 1
+  total_row = row_num
+  row_cells = row_array.map { |x| x[:total] ? x[:total].call(first_data_row, last_data_row, total_row) : nil }
+  sheet.add_row row_cells, :style => total_styles
+end

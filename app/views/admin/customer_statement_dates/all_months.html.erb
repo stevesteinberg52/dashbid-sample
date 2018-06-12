@@ -1,0 +1,19 @@
+<h1>Generate Customer Statement Data / Billing Template</h1>
+
+<table class="table-with-borders">
+  <tr>
+    <th>Year-Month</th>
+  </tr>
+
+  <% @months.each do |row| %>
+    <tr>
+      <td class="td-center bold">
+        <%= link_to row.year_and_month,
+                    {:action => 'month_by_day', :year_month => row.year_and_month},
+                    :title => 'by Day' %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+

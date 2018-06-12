@@ -1,0 +1,143 @@
+<%# datetime_format = '%m-%d %l:%M%P' %>
+<% datetime_format = '%m-%d %H:%M' %>
+
+<%= link_to 'All Months', {:action => 'all_months'}, :class => 'subnav-link' %>
+
+<h1>Generate Customer Statement Data / Billing Template</h1>
+
+<p>
+  <%= link_to "#{fa_icon2(['angle-left', :lg])} Previous month".html_safe, month_by_day_admin_customer_statement_dates_path(year_month: @prev_month), title: 'Previous Month', class: 'btn btn-default btn-sm' %>
+
+  <span class="bold">Current month: <%= @year_month %></span>
+
+  <%= link_to "Next month #{fa_icon2(['angle-right', :lg])}".html_safe, month_by_day_admin_customer_statement_dates_path(year_month: @next_month), title: 'Next Month', class: 'btn btn-default btn-sm' %>
+</p>
+
+<p>
+  <%= link_to 'Generate Billing Template', billing_template_admin_customer_statement_dates_path(year_month: @year_month), class: 'btn btn-default btn-sm' %>
+
+  <%= link_to "Calculate all dates for this month", generate_all_dates_by_month_admin_customer_statement_dates_path(year_month: @year_month), method: :post, class: 'btn btn-primary btn-sm' if @month_by_day.select{|date| date.earliest_dt.present? && date.latest_reconcile_dt.present? && date.earliest_dt >= date.latest_reconcile_dt }.any? %>
+</p>
+
+<table class="table-with-borders">
+  <tr>
+    <th>Day</th>
+    <th><%= fa_icon2([:lock,:lg]) %></th>
+    <th><%= link_to "<i class='fa fa-lock' aria-hidden='true'></i>&nbsp;#{get_link_text(@month_by_day,:not_locked)}".html_safe, 
+            lock_all_dates_admin_customer_statement_dates_path(year_month: @year_month), class: 'subnav-link', 
+            data: { confirm: "Are you sure?" } %></th>
+    <th>Calculated<br>Date/Time</th>
+    <th>Reconciled<br>Impressions</th>
+    <th>Customer<br>Payout</th>
+    <th class="nowrap">&gt;<br>or &lt;</th>
+    <th>Most Recent<br>Reconciliation</th>
+    <th>Locked At</th>
+    <th></th>
+    <th>Waterfall<br>Requests</th>
+    <th>Waterfall<br>Impressions</th>
+    <th title="Fraud Protection Fees">FP Fees</th>
+    <th>Lock<br>FP Rates<br>
+        <%= link_to "<i class='fa fa-lock' aria-hidden='true'></i>&nbsp;#{get_link_text(@month_by_day,:dbif_not_locked)}".html_safe, 
+            lock_all_fpf_dates_admin_customer_statement_dates_path(year_month: @year_month), class: 'subnav-link', 
+            data: { confirm: "Are you sure?" } %></th>
+  </tr>
+
+  <% @month_by_day.each do |row| %>
+    <tr>
+      <td class="td-center nowrap bold"  <% if row.locked_dt? %>style="background-color: #CBFDCB"<% end %>>
+        <%= row.dd.strftime('%m-%d') %>
+      </td>
+
+      <td  <% if row.locked_dt? %>style="background-color: #CBFDCB"<% end %>>
+        <% if row.locked_dt? %>
+          <%= fa_icon2([:lock,:lg],'text-danger') %>
+        <% end %>
+      </td>
+
+      <td class="td-center nowrap"  <% if row.locked_dt? %>style="background-color: #CBFDCB"<% end %>>
+        <% if_admin do %>
+          <% if row.locked_dt? %>
+            <%= link_to 'Unlock Day',
+                        {:action => 'unlock_date', :year_month => @year_month, :dd => row.dd},
+                        :class => 'btn btn-xs btn-default' %>
+          <% else %>
+            <%= link_to 'Calculate',
+                        {:action => 'generate_date', :year_month => @year_month, :dd => row.dd},
+                        :class => 'btn btn-xs btn-default' %>
+            <%= link_to 'Lock Day',
+                        {:action => 'lock_date', :year_month => @year_month, :dd => row.dd},
+                        :class => 'btn btn-xs btn-default' %>
+          <% end %>
+        <% end %>
+      </td>
+
+      <td class="td-center nowrap"  <% if row.locked_dt? %>style="background-color: #CBFDCB"<% end %>>
+        <%= row.earliest_dt.in_time_zone.strftime(datetime_format) if row.earliest_dt %>
+      </td>
+
+      <td class="td-right" <% if row.locked_dt? %>style="background-color: #CBFDCB"<% end %>>
+        <%= number_with_delimiter(row.impressions, :delimiter => ',') %>
+      </td>
+      <td class="td-right" <% if row.locked_dt? %>style="background-color: #CBFDCB"<% end %>>
+        <%= number_to_currency( row.revenue, :precision => 2 ) %>
+      </td>
+
+      <% if row.earliest_dt && row.latest_reconcile_dt %>
+        <% if row.earliest_dt < row.latest_reconcile_dt %>
+          <% x_compared = '<' %>
+          <% x_style = "background-color: #FF9999;" %>
+        <% else %>
+          <% x_compared = '>' %>
+          <% x_style = "" %>
+        <% end %>
+      <% end %>
+      <% if row.locked_dt? and x_style.blank? %>
+        <% x_style="background-color: #CBFDCB"%>
+      <% end %>
+      <td class="td-center" style="<%= x_style %>">
+        <%= x_compared %>
+      </td>
+
+      <td class="td-center nowrap" <% if row.locked_dt? %>style="background-color: #CBFDCB"<% end %>>
+        <%= row.latest_reconcile_dt.in_time_zone.strftime(datetime_format) if row.latest_reconcile_dt %>
+      </td>
+
+      <td class="td-center nowrap" title="<%= "locked by #{row.locked_by_email}" if row.locked_by_email %>"  <% if row.locked_dt? %>style="background-color: #CBFDCB"<% end %>>
+        <%= row.locked_dt.strftime(datetime_format) if row.locked_dt %>
+      </td>
+
+      <td></td>
+      <td class="td-right" <% if row.locked_dt? || row.dbif_locked_at? %>style="background-color: #CBFDCB"<% end %>>
+        <%= number_with_delimiter(row.wf_requests_sum, :delimiter => ',') %>
+      </td>
+      <td class="td-right" <% if row.locked_dt? || row.dbif_locked_at? %>style="background-color: #CBFDCB"<% end %>>
+        <%= number_with_delimiter(row.wf_impressions_sum, :delimiter => ',') %>
+      </td>
+      <td class="td-right" <% if row.locked_dt? || row.dbif_locked_at? %>style="background-color: #CBFDCB"<% end %>>
+        <%= number_to_currency( row.dbif_fee_sum, :precision => 2 ) %>
+      </td>
+      <td class="td-center nowrap" <% if row.locked_dt? || row.dbif_locked_at? %>style="background-color: #CBFDCB"<% end %>>
+        <% unless row.locked_dt  %>
+          <% if row.dbif_locked_at %>
+            <%= link_to 'Unlock FP Rates',
+                        {:action => 'unlock_dbif_date', :year_month => @year_month, :dd => row.dd},
+                        :class => 'btn btn-xs btn-default' %>
+          <% else %>
+              <%= link_to 'Lock FP Rates',
+                          {:action => 'lock_dbif_date', :year_month => @year_month, :dd => row.dd},
+                          :class => 'btn btn-xs btn-default' %>
+          <% end %>
+        <% end %>
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+
+<% content_for :footnotes do %>
+  <hr>
+  <ol class="numbered-list" style="padding-top: 5px;">
+    Note:
+    <li>FP Fee = Fraud Protection Fee, only applies to mobile placement.</li>
+  </ol>
+<% end %>

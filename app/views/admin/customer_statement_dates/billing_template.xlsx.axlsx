@@ -1,0 +1,7 @@
+wb = xlsx_package.workbook
+
+render :partial => "networks_sheet",
+       locals: {:wb => wb, :output => @networks_data, :name => 'Networks'}
+
+render :partial => "publishers_sheet",
+       locals: {:wb => wb, :output => @publishers_data, :name => 'Publishers'}
